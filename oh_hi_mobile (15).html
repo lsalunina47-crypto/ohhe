@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Oh Hi!</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:#1a1a1a;font-family:-apple-system,system-ui,sans-serif;color:#e8e8e8}
+.page{display:none;flex-direction:column;align-items:center;padding:20px 14px 28px;gap:12px;min-height:100vh;background:#1a1a1a}
+.page.on{display:flex}
+.size-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;max-width:380px}
+button{-webkit-appearance:none;appearance:none;cursor:pointer;touch-action:manipulation;font-family:inherit}
+.sbtn{background:#242424;border:1px solid #333;border-radius:10px;color:#e8e8e8;font-size:18px;font-weight:700;padding:18px 10px;width:100%}
+.sbtn:active{background:#333}
+.link{background:none;border:1px solid #333;border-radius:10px;color:#777;font-size:14px;padding:12px;width:100%;max-width:380px}
+.link:active{background:#242424}
+.tbar{display:flex;align-items:center;justify-content:center;gap:18px;width:100%;background:#242424;border:1px solid #333;border-radius:10px;padding:10px 14px}
+.ts{display:flex;flex-direction:column;align-items:center;gap:2px}
+.tl{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.4px}
+.tv{font-size:21px;font-weight:700;font-variant-numeric:tabular-nums}
+.tv.on{color:#1D9E75}
+.sep{width:1px;height:28px;background:#333}
+#bwrap{width:100%;display:flex;justify-content:center}
+#board{display:inline-grid;gap:3px;padding:5px;background:#242424;border:1px solid #2c2c2c;border-radius:10px}
+.cell{border-radius:5px;border:1px solid #333;background:#2a2a2a;cursor:pointer;touch-action:manipulation}
+.cell.R{background:#E24B4A;border-color:#E24B4A}
+.cell.B{background:#378ADD;border-color:#378ADD}
+.cell.R.F{background:#E24B4A;border:2px solid #B83836}
+.cell.B.F{background:#378ADD;border:2px solid #265F99}
+.cell.F{cursor:default;border-color:transparent}
+.cell.HC{outline:3px solid #EF9F27;outline-offset:1px}
+.cell.HA{outline:3px solid #1D9E75;outline-offset:1px;animation:p .9s infinite alternate}
+.cell.HE{box-shadow:0 0 0 2px #E24B4A inset}
+@keyframes p{from{outline-color:#1D9E75}to{outline-color:#9FE1CB}}
+.hbox{display:none;width:100%;padding:10px 12px;background:#242424;border:1px solid #333;border-radius:10px;font-size:13px;line-height:1.5}
+.hbox.on{display:block}
+.wbox{display:none;width:100%;padding:10px 12px;background:#0d3d2d;border:1px solid #1D9E75;border-radius:10px;color:#1D9E75;font-size:14px;font-weight:600;text-align:center}
+.wbox.on{display:block}
+.brow{display:flex;gap:8px;width:100%}
+.btn{flex:1;padding:13px 6px;background:#242424;border:1px solid #333;border-radius:10px;color:#e8e8e8;font-size:14px;font-weight:500;text-align:center}
+.btn:active{background:#333}
+/* stats */
+.shdr{display:flex;align-items:center;justify-content:space-between;width:100%}
+.stit{font-size:18px;font-weight:600}
+.scg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%}
+.sc{background:#242424;border:1px solid #333;border-radius:10px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.scv{font-size:22px;font-weight:700}
+.scl{font-size:10px;color:#555;text-align:center;text-transform:uppercase;letter-spacing:.3px;line-height:1.3}
+.slbl{font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.5px;align-self:flex-start}
+.srs{width:100%;display:flex;flex-direction:column;gap:8px}
+.sr{width:100%;background:#242424;border:1px solid #333;border-radius:10px;overflow:hidden}
+.srh{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;cursor:pointer;touch-action:manipulation}
+.srh:active{background:#333}
+.srn{font-size:15px;font-weight:600}
+.srs2{font-size:12px;color:#888}
+.srb{display:none;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 12px}
+.srb.on{display:grid}
+.sd{background:#2e2e2e;border-radius:7px;padding:8px 10px}
+.sdv{font-size:15px;font-weight:600}
+.sdv.g{color:#1D9E75}
+.sdl{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.ns{text-align:center;color:#555;font-size:14px;padding:30px 0}
+.dbtn{width:100%;padding:13px;border:1px solid rgba(163,45,45,.4);border-radius:10px;background:#242424;color:#A32D2D;font-size:14px;font-weight:500}
+.dbtn:active{background:#2d1010}
+</style>
+</head>
+<body>
+
+<div id="pm" class="page on">
+  <div class="size-grid">
+    <button class="sbtn" onclick="startGame(4)">4×4</button>
+    <button class="sbtn" onclick="startGame(6)">6×6</button>
+    <button class="sbtn" onclick="startGame(8)">8×8</button>
+    <button class="sbtn" onclick="startGame(10)">10×10</button>
+    <button class="sbtn" onclick="startGame(12)">12×12</button>
+    <button class="sbtn" onclick="startGame(14)">14×14</button>
+    <button class="sbtn" onclick="startGame(16)">16×16</button>
+    <button class="sbtn" onclick="startGame(18)">18×18</button>
+    <button class="sbtn" onclick="startGame(20)">20×20</button>
+  </div>
+  <button class="link" onclick="showStats()">Статистика</button>
+</div>
+
+<div id="pg" class="page">
+  <div class="tbar">
+    <div class="ts"><div class="tl">Время</div><div class="tv" id="td">0:00</div></div>
+    <div class="sep"></div>
+    <div class="ts"><div class="tl">Рекорд</div><div class="tv" id="rd">—</div></div>
+    <div class="sep"></div>
+    <div class="ts"><div class="tl">Подсказки</div><div class="tv" id="hd">0</div></div>
+  </div>
+  <div id="bwrap"><div id="board"></div></div>
+  <div class="wbox" id="wb"></div>
+  <div class="hbox" id="hb"></div>
+  <div class="brow">
+    <button class="btn" onclick="giveHint()">Подсказка</button>
+    <button class="btn" onclick="resetBoard()">Сброс</button>
+    <button class="btn" onclick="goMenu()">← Меню</button>
+  </div>
+</div>
+
+<div id="ps" class="page">
+  <div class="shdr">
+    <div class="stit">Статистика</div>
+    <button class="btn" style="flex:0;padding:10px 16px" onclick="goMenu()">← Меню</button>
+  </div>
+  <div class="scg" id="scg"></div>
+  <div class="slbl">По размерам</div>
+  <div class="srs" id="srs"></div>
+  <button class="dbtn" onclick="clearSt()">Сбросить статистику</button>
+</div>
+
+<script>
+// ── pages ──
+function show(id){
+  var all=['pm','pg','ps'];
+  for(var i=0;i<all.length;i++) document.getElementById(all[i]).className='page';
+  document.getElementById(id).className='page on';
+}
+function goMenu(){ tStop(); gid++; show('pm'); }
+function showStats(){ show('ps'); renderSt(); }
+
+// ── stats (with localStorage fallback to memory) ──
+var ST={};
+var SKEY='ohhi_v3';
+function loadSt(){
+  try{ var v=localStorage.getItem(SKEY); if(v) ST=JSON.parse(v)||{}; }catch(e){ ST={}; }
+}
+function saveSt(){
+  try{ localStorage.setItem(SKEY,JSON.stringify(ST)); }catch(e){}
+}
+function dSt(n){
+  if(!ST[n]) ST[n]={g:0,w:0,h:0,wn:0,wh:0,bt:null,tt:0};
+  return ST[n];
+}
+function recWin(n,s,h){
+  var d=dSt(n); d.g++;d.w++;
+  if(h===0)d.wn++;else d.wh++;
+  d.h+=h; d.tt+=s;
+  if(d.bt===null||s<d.bt) d.bt=s;
+  saveSt();
+}
+function clearSt(){
+  if(!confirm('Сбросить статистику?')) return;
+  ST={};
+  try{ localStorage.removeItem(SKEY); }catch(e){}
+  renderSt();
+}
+function ft(s){
+  if(s===null) return'—';
+  var m=Math.floor(s/60),ss=s%60;
+  return m+':'+(ss<10?'0':'')+ss;
+}
+function renderSt(){
+  var ns=[];
+  for(var k in ST) ns.push(+k);
+  ns.sort(function(a,b){return a-b;});
+  var tg=0,tw=0,th=0;
+  for(var i=0;i<ns.length;i++){tg+=ST[ns[i]].g;tw+=ST[ns[i]].w;th+=ST[ns[i]].h;}
+  document.getElementById('scg').innerHTML=
+    '<div class="sc"><div class="scv">'+tg+'</div><div class="scl">Игр</div></div>'+
+    '<div class="sc"><div class="scv">'+tw+'</div><div class="scl">Побед</div></div>'+
+    '<div class="sc"><div class="scv">'+th+'</div><div class="scl">Подсказок</div></div>';
+  if(!ns.length){document.getElementById('srs').innerHTML='<div class="ns">Пока нет игр</div>';return;}
+  var html='';
+  for(var i=0;i<ns.length;i++){
+    var n=ns[i],d=ST[n],avg=d.w?Math.round(d.tt/d.w):null,wr=d.g?Math.round(d.w/d.g*100):0;
+    html+='<div class="sr">'+
+      '<div class="srh" onclick="this.nextElementSibling.classList.toggle(\'on\')">'+
+        '<div class="srn">'+n+'×'+n+'</div><div class="srs2">'+d.w+'/'+d.g+' · '+ft(d.bt)+'</div>'+
+      '</div>'+
+      '<div class="srb">'+
+        '<div class="sd"><div class="sdv">'+d.g+'</div><div class="sdl">Игр</div></div>'+
+        '<div class="sd"><div class="sdv">'+wr+'%</div><div class="sdl">% побед</div></div>'+
+        '<div class="sd"><div class="sdv g">'+ft(d.bt)+'</div><div class="sdl">Рекорд</div></div>'+
+        '<div class="sd"><div class="sdv">'+ft(avg)+'</div><div class="sdl">Среднее</div></div>'+
+        '<div class="sd"><div class="sdv">'+d.wn+'</div><div class="sdl">Без подсказок</div></div>'+
+        '<div class="sd"><div class="sdv">'+d.wh+'</div><div class="sdl">С подсказками</div></div>'+
+      '</div></div>';
+  }
+  document.getElementById('srs').innerHTML=html;
+}
+
+// ── timer ──
+var tInt=null,tSec=0,tOn=false;
+function tStart(){tSec=0;tOn=true;clearInterval(tInt);tInt=setInterval(tTick,1000);tDraw();}
+function tStop(){tOn=false;clearInterval(tInt);}
+function tReset(){tStop();tSec=0;tDraw();}
+function tTick(){if(!tOn)return;tSec++;tDraw();}
+function tDraw(){
+  var m=Math.floor(tSec/60),s=tSec%60;
+  var el=document.getElementById('td');
+  el.textContent=m+':'+(s<10?'0':'')+s;
+  el.className='tv'+(tOn?' on':'');
+}
+
+// ── hint counter ──
+var hc=0;
+function hcReset(){hc=0;document.getElementById('hd').textContent='0';}
+function updateRecord(){
+  var d=ST[N];
+  document.getElementById('rd').textContent=d&&d.bt!==null?ft(d.bt):'—';
+}
+function hcInc(){hc++;document.getElementById('hd').textContent=''+hc;}
+
+// ── game state ──
+var N=6,grid=[],fixed=[],sol=[],gid=0;
+
+// ── helpers ──
+function rnd(){return Math.random();}
+function shuf(a){for(var i=a.length-1;i>0;i--){var j=(rnd()*(i+1))|0,t=a[i];a[i]=a[j];a[j]=t;}}
+function other(v){return v===1?2:1;}
+function cn(v){return v===1?'красная':'синяя';}
+function on(v){return v===1?'синяя':'красная';}
+function gcol(g,c){var r=[];for(var i=0;i<N;i++)r.push(g[i][c]);return r;}
+function gclone(g){var r=[];for(var i=0;i<N;i++){r.push([]);for(var j=0;j<N;j++)r[i].push(g[i][j]);}return r;}
+
+// ── validity ──
+function noThree(a){for(var i=2;i<a.length;i++)if(a[i]>0&&a[i]===a[i-1]&&a[i]===a[i-2])return false;return true;}
+function rowFull(g,r){
+  var row=g[r],n1=0,n2=0;
+  for(var c=0;c<N;c++){if(row[c]===0)return false;if(row[c]===1)n1++;else n2++;}
+  return n1===N/2&&n2===N/2&&noThree(row);
+}
+function colFull(g,c){
+  var col=gcol(g,c),n1=0,n2=0;
+  for(var i=0;i<N;i++){if(col[i]===0)return false;if(col[i]===1)n1++;else n2++;}
+  return n1===N/2&&n2===N/2&&noThree(col);
+}
+function isOk(g){
+  var i,j,k,rs,cs;
+  for(i=0;i<N;i++){if(!rowFull(g,i)||!colFull(g,i))return false;}
+  for(i=0;i<N;i++)for(j=i+1;j<N;j++){
+    rs=true;cs=true;
+    for(k=0;k<N;k++){
+      if(g[i][k]!==g[j][k])rs=false;
+      if(g[k][i]!==g[k][j])cs=false;
+      if(!rs&&!cs)break;
+    }
+    if(rs||cs)return false;
+  }
+  return true;
+}
+
+// ── fast logic filler (returns cells filled) ──
+function fill(g){
+  var f=0,h=N/2,r,c,n1,n2,ok,emp;
+  var changed=true;
+  while(changed){
+    changed=false;
+    // no-three rows
+    for(r=0;r<N;r++)for(c=0;c<N-2;c++){
+      var row=g[r];
+      if(row[c]>0&&row[c]===row[c+1]&&row[c+2]===0){row[c+2]=other(row[c]);f++;changed=true;}
+      if(row[c+1]>0&&row[c+1]===row[c+2]&&row[c]===0){row[c]=other(row[c+1]);f++;changed=true;}
+      if(row[c]>0&&row[c]===row[c+2]&&row[c+1]===0){row[c+1]=other(row[c]);f++;changed=true;}
+    }
+    // no-three cols
+    for(c=0;c<N;c++)for(r=0;r<N-2;r++){
+      if(g[r][c]>0&&g[r][c]===g[r+1][c]&&g[r+2][c]===0){g[r+2][c]=other(g[r][c]);f++;changed=true;}
+      if(g[r+1][c]>0&&g[r+1][c]===g[r+2][c]&&g[r][c]===0){g[r][c]=other(g[r+1][c]);f++;changed=true;}
+      if(g[r][c]>0&&g[r][c]===g[r+2][c]&&g[r+1][c]===0){g[r+1][c]=other(g[r][c]);f++;changed=true;}
+    }
+    // balance rows
+    for(r=0;r<N;r++){
+      n1=0;n2=0;for(c=0;c<N;c++){if(g[r][c]===1)n1++;else if(g[r][c]===2)n2++;}
+      if(n1===h){for(c=0;c<N;c++)if(g[r][c]===0){g[r][c]=2;f++;changed=true;}}
+      else if(n2===h){for(c=0;c<N;c++)if(g[r][c]===0){g[r][c]=1;f++;changed=true;}}
+    }
+    // balance cols
+    for(c=0;c<N;c++){
+      n1=0;n2=0;for(r=0;r<N;r++){if(g[r][c]===1)n1++;else if(g[r][c]===2)n2++;}
+      if(n1===h){for(r=0;r<N;r++)if(g[r][c]===0){g[r][c]=2;f++;changed=true;}}
+      else if(n2===h){for(r=0;r<N;r++)if(g[r][c]===0){g[r][c]=1;f++;changed=true;}}
+    }
+    // duplicate rows
+    for(var r1=0;r1<N;r1++){
+      ok=true;for(c=0;c<N;c++)if(g[r1][c]===0){ok=false;break;}
+      if(!ok)continue;
+      for(var r2=0;r2<N;r2++){
+        if(r1===r2)continue;
+        emp=-1;ok=true;
+        for(c=0;c<N;c++){
+          if(g[r2][c]===0){if(emp>=0){ok=false;break;}emp=c;}
+          else if(g[r2][c]!==g[r1][c]){ok=false;break;}
+        }
+        if(ok&&emp>=0){g[r2][emp]=other(g[r1][emp]);f++;changed=true;}
+      }
+    }
+    // duplicate cols
+    for(var c1=0;c1<N;c1++){
+      ok=true;for(r=0;r<N;r++)if(g[r][c1]===0){ok=false;break;}
+      if(!ok)continue;
+      for(var c2=0;c2<N;c2++){
+        if(c1===c2)continue;
+        emp=-1;ok=true;
+        for(r=0;r<N;r++){
+          if(g[r][c2]===0){if(emp>=0){ok=false;break;}emp=r;}
+          else if(g[r][c2]!==g[r][c1]){ok=false;break;}
+        }
+        if(ok&&emp>=0){g[emp][c2]=other(g[emp][c1]);f++;changed=true;}
+      }
+    }
+  }
+  return f;
+}
+
+// ── fast solution generator: cell-by-cell with propagation + dup detection ──
+function buildSolution(){
+  var HALF=N>>1, NN=N*N;
+  var g=new Uint8Array(NN);
+  var rn1=new Uint8Array(N),rn2=new Uint8Array(N),cn1=new Uint8Array(N),cn2=new Uint8Array(N);
+  var rowSigs=new Uint8Array(N),colSigs=new Uint8Array(N);
+  var rowStrings=[],colStrings=[];
+  function rowComplete(r){return rn1[r]+rn2[r]===N;}
+  function colComplete(c){return cn1[c]+cn2[c]===N;}
+  function rowStr(r){var s='';for(var c=0;c<N;c++)s+=g[r*N+c];return s;}
+  function colStr(c){var s='';for(var r=0;r<N;r++)s+=g[r*N+c];return s;}
+  function canPlace(r,c,v){
+    var i=r*N+c;
+    if(v===1){if(rn1[r]>=HALF||cn1[c]>=HALF)return false;}
+    else{if(rn2[r]>=HALF||cn2[c]>=HALF)return false;}
+    if(c>=2&&g[i-1]===v&&g[i-2]===v)return false;
+    if(r>=2&&g[i-N]===v&&g[i-2*N]===v)return false;
+    return true;
+  }
+  function place(i,v){g[i]=v;var r=(i/N)|0,c=i%N;if(v===1){rn1[r]++;cn1[c]++;}else{rn2[r]++;cn2[c]++;}}
+  function propagate(){
+    var changed=true;
+    while(changed){
+      changed=false;
+      for(var r=0;r<N;r++){
+        for(var c=0;c<N-2;c++){
+          var i=r*N+c,a=g[i],b=g[i+1],d=g[i+2];
+          if(a>0&&a===b&&d===0){if(!canPlace(r,c+2,3-a))return false;place(i+2,3-a);changed=true;}
+          if(b>0&&b===d&&a===0){if(!canPlace(r,c,3-b))return false;place(i,3-b);changed=true;}
+          if(a>0&&a===d&&b===0){if(!canPlace(r,c+1,3-a))return false;place(i+1,3-a);changed=true;}
+        }
+        if(rn1[r]===HALF){for(var c=0;c<N;c++)if(g[r*N+c]===0){if(!canPlace(r,c,2))return false;place(r*N+c,2);changed=true;}}
+        if(rn2[r]===HALF){for(var c=0;c<N;c++)if(g[r*N+c]===0){if(!canPlace(r,c,1))return false;place(r*N+c,1);changed=true;}}
+      }
+      for(var c=0;c<N;c++){
+        for(var r=0;r<N-2;r++){
+          var i=r*N+c,a=g[i],b=g[i+N],d=g[i+2*N];
+          if(a>0&&a===b&&d===0){if(!canPlace(r+2,c,3-a))return false;place(i+2*N,3-a);changed=true;}
+          if(b>0&&b===d&&a===0){if(!canPlace(r,c,3-b))return false;place(i,3-b);changed=true;}
+          if(a>0&&a===d&&b===0){if(!canPlace(r+1,c,3-a))return false;place(i+N,3-a);changed=true;}
+        }
+        if(cn1[c]===HALF){for(var r=0;r<N;r++)if(g[r*N+c]===0){if(!canPlace(r,c,2))return false;place(r*N+c,2);changed=true;}}
+        if(cn2[c]===HALF){for(var r=0;r<N;r++)if(g[r*N+c]===0){if(!canPlace(r,c,1))return false;place(r*N+c,1);changed=true;}}
+      }
+      for(var r=0;r<N;r++){if(rowComplete(r)&&!rowSigs[r]){var s=rowStr(r);for(var k=0;k<rowStrings.length;k++)if(rowStrings[k]===s)return false;rowSigs[r]=1;rowStrings.push(s);}}
+      for(var c=0;c<N;c++){if(colComplete(c)&&!colSigs[c]){var s=colStr(c);for(var k=0;k<colStrings.length;k++)if(colStrings[k]===s)return false;colSigs[c]=1;colStrings.push(s);}}
+    }
+    return true;
+  }
+  var calls=0,MAXCALLS=10000;
+  function bt(pos){
+    if(++calls>MAXCALLS)return false;
+    while(pos<NN&&g[pos]>0)pos++;
+    if(pos===NN)return true;
+    var sv=g.slice(),sr1=rn1.slice(),sr2=rn2.slice(),sc1=cn1.slice(),sc2=cn2.slice();
+    var srs=rowSigs.slice(),scs=colSigs.slice(),srstr=rowStrings.slice(),scstr=colStrings.slice();
+    var r=(pos/N)|0,c=pos%N,v1=Math.random()<0.5?1:2;
+    for(var vi=0;vi<2;vi++){
+      var v=vi===0?v1:3-v1;
+      if(!canPlace(r,c,v))continue;
+      place(pos,v);
+      if(propagate()&&bt(pos+1))return true;
+      g.set(sv);rn1.set(sr1);rn2.set(sr2);cn1.set(sc1);cn2.set(sc2);
+      rowSigs.set(srs);colSigs.set(scs);
+      rowStrings.length=0;for(var x=0;x<srstr.length;x++)rowStrings.push(srstr[x]);
+      colStrings.length=0;for(var x=0;x<scstr.length;x++)colStrings.push(scstr[x]);
+    }
+    return false;
+  }
+  if(!bt(0))return null;
+  var res=[];for(var r=0;r<N;r++){res.push([]);for(var c=0;c<N;c++)res[r].push(g[r*N+c]);}
+  return res;
+}
+
+// ── puzzle generation ──
+var gState=null;
+
+function startGame(n){
+  N=n; gid++;
+  show('pg');
+  document.getElementById('wb').className='wbox';
+  document.getElementById('hb').className='hbox';
+  document.getElementById('hb').textContent='';
+  document.getElementById('board').innerHTML='<div style="color:#777;font-size:14px;padding:40px 20px;text-align:center">Генерация...</div>';
+  tReset(); hcReset(); updateRecord();
+  var id=gid;
+  setTimeout(function(){genStep(id,0);},10);
+}
+
+function genStep(id,attempt){
+  if(id!==gid)return;
+  var s=buildSolution();
+  if(!s){
+    if(attempt<200){setTimeout(function(){genStep(id,attempt+1);},0);}
+    else{document.getElementById('board').innerHTML='<div style="color:#777;font-size:14px;padding:20px;text-align:center">Не удалось — попробуй ещё раз</div>';}
+    return;
+  }
+  sol=s;
+  setTimeout(function(){stripStep(id,s);},0);
+}
+
+function solveByLogic(board){
+  var t=gclone(board),ch=true;
+  while(ch){
+    var h=logicHints(t);ch=h.length>0;
+    var seen={};
+    for(var hi=0;hi<h.length;hi++){var kk=h[hi].r*100+h[hi].c;if(!seen[kk])seen[kk]=h[hi].v;}
+    for(var kk in seen){var r2=(kk/100)|0,c2=kk%100;if(t[r2][c2]===0)t[r2][c2]=seen[kk];}
+  }
+  for(var r2=0;r2<N;r2++)for(var c2=0;c2<N;c2++)if(t[r2][c2]===0)return false;
+  return true;
+}
+
+function stripStep(id,s){
+  if(id!==gid)return;
+  var g=gclone(s);
+  var fx=[];
+  for(var r=0;r<N;r++){fx.push([]);for(var c=0;c<N;c++)fx[r].push(true);}
+  var cells=[];
+  for(var r=0;r<N;r++)for(var c=0;c<N;c++)cells.push([r,c]);
+  shuf(cells);
+  var CHUNK=N<=8?cells.length:Math.max(4,Math.ceil(cells.length/10));
+  function doChunk(ci){
+    if(id!==gid)return;
+    var end=Math.min(ci+CHUNK,cells.length);
+    for(var i=ci;i<end;i++){
+      var r=cells[i][0],c=cells[i][1];
+      var sv=g[r][c];
+      g[r][c]=0; fx[r][c]=false;
+      if(!solveByLogic(g)){g[r][c]=sv; fx[r][c]=true;}
+    }
+    if(end<cells.length){setTimeout(function(){doChunk(end);},0);return;}
+    grid=[];fixed=[];
+    for(var r=0;r<N;r++){grid.push([]);fixed.push([]);for(var c=0;c<N;c++){grid[r].push(g[r][c]);fixed[r].push(fx[r][c]);}}
+    if(id!==gid)return;
+    renderBoard(); tStart();
+  }
+  doChunk(0);
+}
+
+// ── render ──
+function csz(){
+  var a=Math.min(window.innerWidth-32,560);
+  return Math.max(18,Math.min(50,Math.floor((a-N*3-10)/N)));
+}
+function renderBoard(){
+  var b=document.getElementById('board'),sz=csz();
+  b.style.gridTemplateColumns='repeat('+N+','+sz+'px)';
+  b.innerHTML='';
+  for(var r=0;r<N;r++)for(var c=0;c<N;c++){
+    var d=document.createElement('div');
+    var cls='cell';
+    if(grid[r][c]===1)cls+=' R';
+    else if(grid[r][c]===2)cls+=' B';
+    if(fixed[r][c])cls+=' F';
+    d.className=cls;
+    d.style.width=sz+'px';
+    d.style.height=sz+'px';
+    if(!fixed[r][c])(function(rr,cc){d.onclick=function(){tap(rr,cc);};})(r,c);
+    b.appendChild(d);
+  }
+}
+function cells(){return document.querySelectorAll('.cell');}
+function cat(r,c){return cells()[r*N+c];}
+function clrHint(){
+  var cs=cells();
+  for(var i=0;i<cs.length;i++)cs[i].classList.remove('HC','HA');
+  var hb=document.getElementById('hb');hb.className='hbox';hb.textContent='';
+}
+
+function tap(r,c){
+  grid[r][c]=(grid[r][c]+1)%3;
+  renderBoard();chkErr();
+  var full=true;
+  for(var i=0;i<N&&full;i++)for(var j=0;j<N&&full;j++)if(grid[i][j]===0)full=false;
+  if(full&&isOk(grid)){tStop();recWin(N,tSec,hc);updateRecord();showWin();}
+}
+function showWin(){
+  var m=Math.floor(tSec/60),s=tSec%60;
+  var t=m+':'+(s<10?'0':'')+s,h=hc===0?'без подсказок':'подсказок: '+hc;
+  var d=ST[N],rec=d&&(d.w===1||(d.bt===tSec&&hc===0));
+  document.getElementById('wb').textContent=N+'×'+N+' за '+t+' — '+h+(rec?' рекорд':'');
+  document.getElementById('wb').className='wbox on';
+}
+function chkErr(){
+  var cs=cells(),e=[],i,r;
+  for(var k=0;k<cs.length;k++)e.push(false);
+  for(r=0;r<N;r++)for(i=2;i<N;i++){
+    if(grid[r][i]>0&&grid[r][i]===grid[r][i-1]&&grid[r][i]===grid[r][i-2]){e[r*N+i-2]=true;e[r*N+i-1]=true;e[r*N+i]=true;}
+    if(grid[i][r]>0&&grid[i][r]===grid[i-1][r]&&grid[i][r]===grid[i-2][r]){e[(i-2)*N+r]=true;e[(i-1)*N+r]=true;e[i*N+r]=true;}
+  }
+  for(var k=0;k<cs.length;k++){if(e[k])cs[k].classList.add('HE');else cs[k].classList.remove('HE');}
+}
+function resetBoard(){
+  for(var r=0;r<N;r++)for(var c=0;c<N;c++)if(!fixed[r][c])grid[r][c]=0;
+  renderBoard();clrHint();
+  document.getElementById('wb').className='wbox';
+  tReset();tStart();hcReset();
+}
+
+// ── hints ──
+function logicHints(g){
+  var ded=[],r,c,v,i,n1,n2,fl,emp,ctx,cc;
+  function mk(r,c,v,txt,ctx,ans){if(g[r][c]===0)ded.push({r:r,c:c,v:v,txt:txt,ctx:ctx,ans:ans});}
+  for(r=0;r<N;r++)for(c=0;c<N-2;c++){
+    if(g[r][c]>0&&g[r][c]===g[r][c+1]&&g[r][c+2]===0)mk(r,c+2,other(g[r][c]),'Две '+cn(g[r][c])+'х подряд — рядом только '+on(g[r][c])+'.',[[r,c],[r,c+1]],[[r,c+2]]);
+    if(g[r][c+1]>0&&g[r][c+1]===g[r][c+2]&&g[r][c]===0)mk(r,c,other(g[r][c+1]),'Две '+cn(g[r][c+1])+'х подряд — рядом только '+on(g[r][c+1])+'.',[[r,c+1],[r,c+2]],[[r,c]]);
+    if(g[r][c]>0&&g[r][c]===g[r][c+2]&&g[r][c+1]===0)mk(r,c+1,other(g[r][c]),'Одинаковые по краям — между ними только '+on(g[r][c])+'.',[[r,c],[r,c+2]],[[r,c+1]]);
+  }
+  for(c=0;c<N;c++)for(r=0;r<N-2;r++){
+    if(g[r][c]>0&&g[r][c]===g[r+1][c]&&g[r+2][c]===0)mk(r+2,c,other(g[r][c]),'Две '+cn(g[r][c])+'х подряд — рядом только '+on(g[r][c])+'.',[[r,c],[r+1,c]],[[r+2,c]]);
+    if(g[r+1][c]>0&&g[r+1][c]===g[r+2][c]&&g[r][c]===0)mk(r,c,other(g[r+1][c]),'Две '+cn(g[r+1][c])+'х подряд — рядом только '+on(g[r+1][c])+'.',[[r+1,c],[r+2,c]],[[r,c]]);
+    if(g[r][c]>0&&g[r][c]===g[r+2][c]&&g[r+1][c]===0)mk(r+1,c,other(g[r][c]),'Одинаковые по краям — между ними только '+on(g[r][c])+'.',[[r,c],[r+2,c]],[[r+1,c]]);
+  }
+  for(r=0;r<N;r++){
+    emp=[];n1=0;n2=0;
+    for(c=0;c<N;c++){if(g[r][c]===0)emp.push([r,c]);else if(g[r][c]===1)n1++;else n2++;}
+    if(n1===N/2&&emp.length){fl=[];for(c=0;c<N;c++)if(g[r][c]===1)fl.push([r,c]);for(i=0;i<emp.length;i++)mk(emp[i][0],emp[i][1],2,'В строке достаточно красных — пустые синие.',fl,[emp[i]]);}
+    if(n2===N/2&&emp.length){fl=[];for(c=0;c<N;c++)if(g[r][c]===2)fl.push([r,c]);for(i=0;i<emp.length;i++)mk(emp[i][0],emp[i][1],1,'В строке достаточно синих — пустые красные.',fl,[emp[i]]);}
+  }
+  for(c=0;c<N;c++){
+    emp=[];n1=0;n2=0;
+    for(r=0;r<N;r++){if(g[r][c]===0)emp.push([r,c]);else if(g[r][c]===1)n1++;else n2++;}
+    if(n1===N/2&&emp.length){fl=[];for(r=0;r<N;r++)if(g[r][c]===1)fl.push([r,c]);for(i=0;i<emp.length;i++)mk(emp[i][0],emp[i][1],2,'В столбце достаточно красных — пустые синие.',fl,[emp[i]]);}
+    if(n2===N/2&&emp.length){fl=[];for(r=0;r<N;r++)if(g[r][c]===2)fl.push([r,c]);for(i=0;i<emp.length;i++)mk(emp[i][0],emp[i][1],1,'В столбце достаточно синих — пустые красные.',fl,[emp[i]]);}
+  }
+  for(var r1=0;r1<N;r1++){
+    var ok=true;for(c=0;c<N;c++)if(g[r1][c]===0){ok=false;break;}
+    if(!ok)continue;
+    for(var r2=0;r2<N;r2++){
+      if(r1===r2)continue;
+      emp=[];ok=true;
+      for(c=0;c<N;c++){if(g[r2][c]===0){if(emp.length>0){ok=false;break;}emp.push(c);}else if(g[r2][c]!==g[r1][c]){ok=false;break;}}
+      if(ok&&emp.length===1){cc=emp[0];ctx=[[r1,cc]];for(c=0;c<N;c++)if(c!==cc)ctx.push([r2,c]);mk(r2,cc,other(g[r1][cc]),'Строки почти совпадают — последняя клетка должна отличаться.',ctx,[[r2,cc]]);}
+    }
+  }
+  for(var c1=0;c1<N;c1++){
+    var ok=true;for(r=0;r<N;r++)if(g[r][c1]===0){ok=false;break;}
+    if(!ok)continue;
+    for(var c2=0;c2<N;c2++){
+      if(c1===c2)continue;
+      emp=[];ok=true;
+      for(r=0;r<N;r++){if(g[r][c2]===0){if(emp.length>0){ok=false;break;}emp.push(r);}else if(g[r][c2]!==g[r][c1]){ok=false;break;}}
+      if(ok&&emp.length===1){var rr=emp[0];ctx=[[rr,c1]];for(r=0;r<N;r++)if(r!==rr)ctx.push([r,c2]);mk(rr,c2,other(g[rr][c1]),'Столбцы почти совпадают — последняя клетка должна отличаться.',ctx,[[rr,c2]]);}
+    }
+  }
+  return ded;
+}
+
+function giveHint(){
+  clrHint();
+  var full=true;
+  for(var r=0;r<N&&full;r++)for(var c=0;c<N&&full;c++)if(grid[r][c]===0)full=false;
+  if(full)return;
+  var ded=logicHints(grid);
+  var hbox=document.getElementById('hb');
+  if(!ded.length){hbox.className='hbox on';hbox.textContent='Логическая ошибка';return;}
+  hcInc();
+  var d=ded[0],i,el;
+  for(i=0;i<d.ctx.length;i++){el=cat(d.ctx[i][0],d.ctx[i][1]);if(el)el.classList.add('HC');}
+  for(i=0;i<d.ans.length;i++){el=cat(d.ans[i][0],d.ans[i][1]);if(el)el.classList.add('HA');}
+  hbox.className='hbox on';hbox.textContent=d.txt;
+}
+
+window.onresize=function(){if(grid.length)renderBoard();};
+loadSt();
+</script>
+</body>
+</html>
