@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Oh Hi!</title>
+<style>
+body { background:#1a1a1a; color:#e8e8e8; font-family:sans-serif; margin:0; padding:20px; }
+button { background:#242424; border:1px solid #444; border-radius:10px; color:#e8e8e8; font-size:18px; font-weight:700; padding:18px; width:100%; margin-bottom:10px; display:block; }
+.page { display:none; }
+.page.on { display:block; }
+#log { background:#0d3d2d; border:1px solid #1D9E75; border-radius:8px; color:#1D9E75; padding:12px; margin-top:12px; font-size:13px; display:none; }
+</style>
+</head>
+<body>
+
+<div id="p1" class="page on">
+  <button onclick="go()">Нажми меня</button>
+  <div id="log"></div>
+</div>
+
+<div id="p2" class="page">
+  <button onclick="back()">← Назад</button>
+  <p style="margin-top:20px;color:#1D9E75;font-size:18px;text-align:center">Работает! ✓</p>
+</div>
+
+<script>
+function log(msg) {
+  var el = document.getElementById('log');
+  el.style.display = 'block';
+  el.textContent = msg;
+}
+
+function go() {
+  try {
+    document.getElementById('p1').className = 'page';
+    document.getElementById('p2').className = 'page on';
+  } catch(e) {
+    log('Ошибка: ' + e.message);
+  }
+}
+
+function back() {
+  document.getElementById('p2').className = 'page';
+  document.getElementById('p1').className = 'page on';
+}
+
+log('JS загружен ✓');
+</script>
+</body>
+</html>
